@@ -28,7 +28,7 @@ Z40 x Z48 x Z64 ~ Z960 x Z16 x Z8
 Z45 x Z150 x Z75 ~ Z450 x Z75 x Z15
 ```
 
-## Get all decompostions of Z360
+## Get all decompostions of $\Z_{360}$
 
 ```
 Utils.AllDecompositions(360);
@@ -46,7 +46,7 @@ Z30 x Z6  x Z2     = Z5 x Z3 x Z3 x Z2 x Z2 x Z2
 Total : 6
 ```
 
-## Get all decompostions of Z4320
+## Get all decompostions of $\Z_{4320}$
 
 ```
 Utils.AllDecompositions(4320);
