@@ -36,6 +36,7 @@ public static class Utils
 
             if (isprime) primes.Enqueue(i);
         }
+
         return primes;
     }
 
@@ -94,8 +95,7 @@ public static class Utils
             }
         }
 
-        var sum = all.GroupBy(l0 => l0.Sum()).ToDictionary(a => a.Key, b => b.ToList());
-        return sum;
+        return all.GroupBy(l0 => l0.Sum()).ToDictionary(a => a.Key, b => b.ToList());
     }
 
     // Compute Invariants Factors from 
