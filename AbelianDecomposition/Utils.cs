@@ -1,4 +1,4 @@
-namespace AbeliansDecomposition;
+namespace AbelianDecomposition;
 
 public static class Utils
 {
