@@ -190,7 +190,7 @@ public static class Abelian
     {
         var digits = factors.Max(a => $"{a}".Length);
         var fmt = $"Z{{0,-{digits}}}";
-        return factors.Glue(" x ", fmt);
+        return factors.OrderBy(a => a).Glue(" x ", fmt);
     }
 
     // Compute then output in console canonical
@@ -201,7 +201,7 @@ public static class Abelian
         var it = mods.OrderBy(a => a).ToArray();
         var factors = GroupType(it);
         Console.WriteLine($"Group Type : ({it.Glue()})");
-        Console.WriteLine("Equivalent  : {0}", factors.Glue(" x ", "Z{0}"));
+        Console.WriteLine("Equivalent  : {0}", factors.OrderBy(a => a).Glue(" x ", "Z{0}"));
         Console.WriteLine();
     }
 
@@ -211,7 +211,7 @@ public static class Abelian
     public static void CanonicDecomposition(params int[] it)
     {
         var factors = CanonicEquivalent(it);
-        Console.WriteLine("{0} ~ {1}", it.Glue(" x ", "Z{0}"), factors.Glue(" x ", "Z{0}"));
+        Console.WriteLine("{0} ~ {1}", it.Glue(" x ", "Z{0}"), factors.OrderBy(a => a).Glue(" x ", "Z{0}"));
     }
 
     // Product of a sequence of integers
