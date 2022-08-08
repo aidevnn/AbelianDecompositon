@@ -1,11 +1,11 @@
 ﻿using AbelianDecomposition;
 
-Utils.AbeliansFromGroupType(2, 2, 3, 8, 9, 5);
-Utils.AbeliansFromGroupType(4, 5, 3, 2, 5);
+Abelian.FromGroupType(2, 2, 3, 8, 9, 5);
+Abelian.FromGroupType(4, 5, 3, 2, 5);
 
-Utils.CanonicDecomposition(40, 48);
-Utils.CanonicDecomposition(40, 48, 64);
-Utils.CanonicDecomposition(45, 150, 75);
+Abelian.CanonicDecomposition(40, 48);
+Abelian.CanonicDecomposition(40, 48, 64);
+Abelian.CanonicDecomposition(45, 150, 75);
 
-Utils.AllDecompositions(360);
-Utils.AllDecompositions(4320);
+Abelian.AllDecompositions(360);
+Abelian.AllDecompositions(4320);

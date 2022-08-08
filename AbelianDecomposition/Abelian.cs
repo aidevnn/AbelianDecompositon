@@ -1,10 +1,10 @@
 namespace AbelianDecomposition;
 
-public static class Utils
+public static class Abelian
 {
     // Static constructors for creating at startup
     // all primes less than 10000 and the partition of integers less than 32
-    static Utils()
+    static Abelian()
     {
         Primes10000 = new(AllPrimes(10000));
         Partitions32 = IntPartitions(32);
@@ -196,7 +196,7 @@ public static class Utils
     // Compute then output in console canonical
     // equivalent decomposition in invariants factors
     // from the sequence of group type
-    public static void AbeliansFromGroupType(params int[] mods)
+    public static void FromGroupType(params int[] mods)
     {
         var it = mods.OrderBy(a => a).ToArray();
         var factors = GroupType(it);
