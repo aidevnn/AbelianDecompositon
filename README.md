@@ -3,8 +3,8 @@
 ## Get Invariants Product Group from Group Type
 
 ```
-Utils.AbeliansFromGroupType(2, 2, 3, 8, 9, 5);
-Utils.AbeliansFromGroupType(4, 5, 3, 2, 5);
+Abelian.FromGroupType(2, 2, 3, 8, 9, 5);
+Abelian.FromGroupType(4, 5, 3, 2, 5);
 ```
 will output
 ```
@@ -17,9 +17,9 @@ Equivalent  : Z60 x Z10
 
 ## Get canonical Decomposition 
 ```
-Utils.CanonicDecomposition(40, 48);
-Utils.CanonicDecomposition(40, 48, 64);
-Utils.CanonicDecomposition(45, 150, 75);
+Abelian.CanonicDecomposition(40, 48);
+Abelian.CanonicDecomposition(40, 48, 64);
+Abelian.CanonicDecomposition(45, 150, 75);
 ```
 will output
 ```
@@ -31,7 +31,7 @@ Z45 x Z150 x Z75 ~ Z450 x Z75 x Z15
 ## Get all decompostions of $\mathbb{Z}_{360}$
 
 ```
-Utils.AllDecompositions(360);
+Abelian.AllDecompositions(360);
 ```
 will output
 ```
@@ -49,7 +49,7 @@ Total : 6
 ## Get all decompostions of $\mathbb{Z}_{4320}$
 
 ```
-Utils.AllDecompositions(4320);
+Abelian.AllDecompositions(4320);
 ```
 will output
 ```
