@@ -7,5 +7,8 @@ Abelian.CanonicDecomposition(40, 48);
 Abelian.CanonicDecomposition(40, 48, 64);
 Abelian.CanonicDecomposition(45, 150, 75);
 
-Abelian.AllDecompositions(360);
-Abelian.AllDecompositions(4320);
+Abelian.GroupTypesOfOrder(450);
+Abelian.GroupTypesOfOrder(1600);
+
+Abelian.DecompositionsOfOrder(360);
+Abelian.DecompositionsOfOrder(4320);

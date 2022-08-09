@@ -98,9 +98,8 @@ public static class Abelian
         return all.GroupBy(l0 => l0.Sum()).ToDictionary(a => a.Key, b => b.ToList());
     }
 
-    // Compute Invariants Factors from 
-    // the sequence of group type
-    public static List<int> GroupType(params int[] it)
+    // Compute Invariants Factors from the sequence of group type
+    public static IEnumerable<int> GroupType(params int[] it)
     {
         var primesDecomp = it.Select(PrimesDecomposition).ToList();
         if (primesDecomp.Any(i => i.Count > 1))
@@ -113,39 +112,44 @@ public static class Abelian
         List<int> factors = new();
         for (int k = 0; k < mx; ++k)
         {
-            int p = primesChains.Select(l1 => l1.Count > k ? l1[k] : 1).Prod();
+            int p = primesChains.Where(l1 => l1.Count > k).Select(l1 => l1[k]).Prod();
             factors.Add(p);
         }
 
-        return factors;
+        return factors.OrderBy(a => a);
     }
 
     // Compute Canonical Equivalent of a product of Abelian Groups 
-    public static List<int> CanonicEquivalent(params int[] it)
+    public static IEnumerable<int> CanonicEquivalent(params int[] it)
     {
         var it0 = it.SelectMany(PrimesDecomposition).Select(a => (int)Math.Pow(a.p, a.pow)).ToArray();
         return GroupType(it0);
     }
 
-    // Compute for an integer N, all Invariants Factors
-    // and all Elementaries Divisors
-    public static List<(List<int> factors, List<int> elemDivs)> InvariantFactors(int N)
+    // Compute for an integer N possible factors decompositions
+    public static IEnumerable<IEnumerable<List<int>>> FactorsDecompositions(int N)
     {
         var primesDecomp = PrimesDecomposition(N);
-        var maxPow = primesDecomp.Max(a => a.pow);
-        Console.WriteLine($"Decomposition of Z{N}, max Factors : {maxPow}");
         var allChains = primesDecomp.Select(a => Partitions32[a.pow].Select(b => b.Select(pow => (int)Math.Pow(a.p, pow))));
 
-        var all = new List<List<List<int>>>() { new() };
+        List<IEnumerable<IEnumerable<int>>> all = new() { Enumerable.Empty<IEnumerable<int>>() };
         foreach (var l0 in allChains)
         {
             var tmp = all.ToList();
             all.Clear();
             foreach (var l1 in l0)
                 foreach (var l2 in tmp)
-                    all.Add(l2.Append(l1).Select(l3 => l3.ToList()).ToList());
+                    all.Add(l2.Append(l1));
         }
 
+        return all.Select(l0 => l0.Select(l1 => l1.ToList()));
+    }
+
+    // Compute for an integer N, all Invariants Factors
+    // and all Elementaries Divisors
+    public static List<(List<int> factors, List<int> elemDivs)> InvariantFactors(int N)
+    {
+        var all = FactorsDecompositions(N);
         List<(List<int> factors, List<int> elemDivs)> result = new();
         foreach (var l0 in all)
         {
@@ -154,7 +158,7 @@ public static class Abelian
             List<int> elemDivs = new();
             for (int k = 0; k < mx; ++k)
             {
-                var l2 = l0.Where(l1 => l1.Count > k).Select(l1 => l1[k]).ToList();
+                var l2 = l0.Where(l1 => l1.Count > k).Select(l1 => l1[k]);
                 elemDivs.AddRange(l2);
                 factors.Add(l2.Prod());
             }
@@ -163,35 +167,18 @@ public static class Abelian
         }
 
         result.Sort((a, b) => CompareSeq1(b.factors, a.factors));
-        result.ForEach(a => a.elemDivs.Sort((a, b) => b.CompareTo(a)));
+        result.ForEach(a =>
+        {
+            a.factors.Sort((a, b) => a.CompareTo(b));
+            a.elemDivs.Sort((a, b) => a.CompareTo(b));
+        });
 
         return result;
     }
 
-    // Compute then output in console all decompositions
-    // of an integer N, Invariants Factors and Elementaries Divisors
-    public static void AllDecompositions(int N)
-    {
-        var result = InvariantFactors(N);
-        var resultStr = result.Select(a => (AbeliansToStr(a.factors), AbeliansToStr(a.elemDivs))).ToList();
-        var digits = resultStr.Max(a => a.Item1.Length);
-        digits = Math.Max(digits, "Invariants factors".Length);
-        var fmt0 = $"{{0,-{digits}}}   {{1}}";
-        var fmt1 = $"{{0,-{digits}}} = {{1}}";
-        Console.WriteLine(fmt0, "Invariants factors", "Elementaries divisors");
-        resultStr.ForEach(l => Console.WriteLine(fmt1, l.Item1, l.Item2));
-        Console.WriteLine($"Total : {resultStr.Count}");
-        Console.WriteLine();
-    }
-
     // Format sequence int
     // Example : {8,15} => Z8  x Z15
-    static string AbeliansToStr(List<int> factors)
-    {
-        var digits = factors.Max(a => $"{a}".Length);
-        var fmt = $"Z{{0,-{digits}}}";
-        return factors.OrderBy(a => a).Glue(" x ", fmt);
-    }
+    static string AbeliansToStr(IEnumerable<int> factors) => factors.Glue(" x ", "Z{0}");
 
     // Compute then output in console canonical
     // equivalent decomposition in invariants factors
@@ -201,7 +188,20 @@ public static class Abelian
         var it = mods.OrderBy(a => a).ToArray();
         var factors = GroupType(it);
         Console.WriteLine($"Group Type : ({it.Glue()})");
-        Console.WriteLine("Equivalent  : {0}", factors.OrderBy(a => a).Glue(" x ", "Z{0}"));
+        Console.WriteLine("Equivalent : {0} ~ {1}", AbeliansToStr(it), AbeliansToStr(factors));
+        Console.WriteLine();
+    }
+
+    // Compute then output in console Elementaries Divisors for an integer N
+    public static void GroupTypesOfOrder(int N)
+    {
+        var possibiles = FactorsDecompositions(N).Select(l0 => l0.SelectMany(a => a).OrderBy(a => a)).ToList();
+        possibiles.Sort((a, b) => CompareSeq1(b, a));
+        Console.WriteLine($"Z{N} possibles group types : ");
+        foreach (var l in possibiles)
+            Console.WriteLine($"({l.Glue()})");
+
+        Console.WriteLine($"Total : {possibiles.Count}");
         Console.WriteLine();
     }
 
@@ -211,7 +211,24 @@ public static class Abelian
     public static void CanonicDecomposition(params int[] it)
     {
         var factors = CanonicEquivalent(it);
-        Console.WriteLine("{0} ~ {1}", it.Glue(" x ", "Z{0}"), factors.OrderBy(a => a).Glue(" x ", "Z{0}"));
+        Console.WriteLine("{0} ~ {1}", AbeliansToStr(it), AbeliansToStr(factors));
+    }
+
+    // Compute then output in console all decompositions
+    // of an integer N, Invariants Factors and Elementaries Divisors
+    public static void DecompositionsOfOrder(int N)
+    {
+        var result = InvariantFactors(N);
+        Console.WriteLine($"Decomposition of Z{N}, max Factors : {result.Max(a => a.factors.Count)}");
+        var resultStr = result.Select(a => (AbeliansToStr(a.factors), AbeliansToStr(a.elemDivs))).ToList();
+        var digits = resultStr.Max(a => a.Item1.Length);
+        digits = Math.Max(digits, "Invariants factors".Length);
+        var fmt0 = $"{{0,-{digits}}}   {{1}}";
+        var fmt1 = $"{{0,-{digits}}} = {{1}}";
+        Console.WriteLine(fmt0, "Invariants factors", "Elementaries divisors");
+        resultStr.ForEach(l => Console.WriteLine(fmt1, l.Item1, l.Item2));
+        Console.WriteLine($"Total : {resultStr.Count}");
+        Console.WriteLine();
     }
 
     // Product of a sequence of integers
